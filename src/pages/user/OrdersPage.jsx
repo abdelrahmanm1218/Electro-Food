@@ -13,7 +13,10 @@ export default function OrdersPage() {
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    api.get("/orders/my-orders/").then((res) => setOrders(res.data));
+    api.get("/orders/my-orders/").then((res) => {
+      const data = res.data;
+      setOrders(Array.isArray(data) ? data : data.results || []);
+    });
   }, []);
 
   const getStatusInfo = (status) => {
