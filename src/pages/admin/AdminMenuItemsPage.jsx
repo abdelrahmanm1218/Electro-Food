@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import api from "../../api";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,7 @@ export default function AdminMenuItemsPage() {
   const [count, setCount] = useState(0);
   const [nextPage, setNextPage] = useState(null);
   const [prevPage, setPrevPage] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useTranslation();
   const totalPages = Math.max(1, Math.ceil(count / 10));
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -47,6 +48,27 @@ export default function AdminMenuItemsPage() {
   useEffect(() => {
     loadItems(1);
   }, []);
+
+  useEffect(() => {
+    const editId = searchParams.get("edit");
+    if (!editId) return;
+
+    api.get(`/menu/items/${editId}/`)
+      .then((res) => {
+        setEditingItem(res.data);
+        setIsDialogOpen(true);
+      })
+      .catch(() => {
+        setIsDialogOpen(false);
+      });
+  }, [searchParams]);
+
+  const clearEditQuery = () => {
+    if (!searchParams.has("edit")) return;
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete("edit");
+    setSearchParams(nextParams, { replace: true });
+  };
 
   const handleEditClick = (item) => {
     setEditingItem({ ...item });
@@ -76,6 +98,7 @@ export default function AdminMenuItemsPage() {
         toast.success("Menu item added successfully");
       }
       setIsDialogOpen(false);
+      clearEditQuery();
       loadItems(page);
     } catch (err) {
       toast.error(editingItem.id ? "Failed to update menu item" : "Failed to add menu item");
@@ -94,11 +117,7 @@ export default function AdminMenuItemsPage() {
       </CardHeader>
 
       <CardContent>
-        <div className="mb-4 flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            Page {page} {count ? `of ${Math.ceil(count / 10)}` : ""}
-          </div>
-        </div>
+        
         <Table>
           <TableHeader>
             <TableRow>
@@ -179,7 +198,15 @@ export default function AdminMenuItemsPage() {
         </div>
       </CardContent>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            clearEditQuery();
+          }
+          setIsDialogOpen(open);
+        }}
+      >
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
             <DialogTitle>{editingItem?.id ? "Edit Menu Item" : "Add New Menu Item"}</DialogTitle>
@@ -219,6 +246,17 @@ export default function AdminMenuItemsPage() {
                   value={editingItem.price}
                   onChange={(e) => setEditingItem({ ...editingItem, price: e.target.value })}
                   className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="image_url" className="text-end">Image URL</Label>
+                <Input
+                  id="image_url"
+                  type="url"
+                  value={editingItem.image_url || ""}
+                  onChange={(e) => setEditingItem({ ...editingItem, image_url: e.target.value })}
+                  className="col-span-3"
+                  placeholder="https://example.com/image.jpg"
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">

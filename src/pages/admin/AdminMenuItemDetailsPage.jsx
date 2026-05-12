@@ -52,7 +52,7 @@ export default function AdminMenuItemDetailsPage() {
           </div>
         </div>
         <Button asChild className="whitespace-nowrap">
-          <Link to="/admin/menu-items" className="gap-2">
+          <Link to={`/admin/menu-items?edit=${item.id}`} className="gap-2">
             <Pencil className="h-4 w-4" />
             {t("editItem")}
           </Link>
