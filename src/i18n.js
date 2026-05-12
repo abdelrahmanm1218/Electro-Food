@@ -75,6 +75,7 @@ const resources = {
       noDescription: "No description provided.",
       itemDetails: "Item Details",
       unavailable: "Unavailable",
+      loginToOrder: "Login to Order",
     },
   },
   ar: {
@@ -148,6 +149,7 @@ const resources = {
       noDescription: "لا يوجد وصف.",
       itemDetails: "تفاصيل الصنف",
       unavailable: "غير متاح",
+      loginToOrder: "تسجيل الدخول للطلب",
     },
   },
 };
