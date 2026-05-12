@@ -34,19 +34,19 @@ export default function MenuPage() {
   };
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid gap-6 grid-cols-2 md:grid-cols-4">
       {items.map((item) => {
         const itemName = i18n.language === "ar" ? item.name_ar : item.name_en;
         return (
-          <Card key={item.id} className="overflow-hidden transition-all hover:shadow-lg">
-            <div className="aspect-video w-full overflow-hidden">
+          <Card key={item.id} className="flex h-full flex-col overflow-hidden transition-all hover:shadow-lg pt-0">
+            <div className="aspect-video w-full overflow-hidden rounded-t-xl">
               <img 
                 className="h-full w-full object-cover transition-transform hover:scale-105" 
                 src={item.image_url || "https://picsum.photos/400/300"} 
                 alt={itemName}
               />
             </div>
-            <CardHeader className="p-4">
+            <CardHeader className="flex-1 p-4">
               <div className="flex items-start justify-between gap-2">
                 <CardTitle className="text-xl">
                   {itemName}
@@ -57,16 +57,18 @@ export default function MenuPage() {
                 {i18n.language === "ar" ? item.description_ar : item.description_en}
               </CardDescription>
             </CardHeader>
-            <CardFooter className="p-4 pt-0">
-              {item.is_available ? (
-                user ? (
-                  <Button className="w-full gap-2" onClick={() => addToCart(item.id, itemName)}>
-                    <ShoppingCart className="h-4 w-4" />
-                    {t("addToCart")}
-                  </Button>
-                ) : null
+            <CardFooter className="mt-auto flex items-center justify-center p-4 pt-1 pb-1">
+              {item.is_available && user ? (
+                <Button className="w-full gap-2" onClick={() => addToCart(item.id, itemName)}>
+                  <ShoppingCart className="h-4 w-4" />
+                  {t("addToCart")}
+                </Button>
               ) : (
-                <Button variant="secondary" className="w-full" disabled>
+                <Button
+                  className="w-full gap-2"
+                  variant="secondary"
+                  disabled
+                >
                   {t("unavailable")}
                 </Button>
               )}
