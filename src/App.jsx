@@ -14,12 +14,14 @@ import OrdersPage from "./pages/user/OrdersPage";
 import RegisterPage from "./pages/user/RegisterPage";
 
 function RequireAuth({ children }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  if (loading) return null; // Or a loading spinner
   return user ? children : <Navigate to="/login" />;
 }
 
 function RequireAdmin({ children }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  if (loading) return null; // Or a loading spinner
   return user?.is_staff ? children : <Navigate to="/" />;
 }
 
