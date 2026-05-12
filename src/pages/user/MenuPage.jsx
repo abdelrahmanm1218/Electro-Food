@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
@@ -13,6 +14,7 @@ export default function MenuPage() {
   const { user } = useAuth();
   const { fetchCart } = useCart();
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     api.get("/menu/items/").then((res) => {
@@ -58,7 +60,14 @@ export default function MenuPage() {
               </CardDescription>
             </CardHeader>
             <CardFooter className="mt-auto flex items-center justify-center p-4 pt-1 pb-1">
-              {item.is_available && user ? (
+              {!user ? (
+                <Button
+                  className="w-full gap-2 bg-yellow-300 text-black hover:bg-yellow-400"
+                  onClick={() => navigate("/login")}
+                >
+                  {t("loginToOrder")}
+                </Button>
+              ) : item.is_available ? (
                 <Button className="w-full gap-2" onClick={() => addToCart(item.id, itemName)}>
                   <ShoppingCart className="h-4 w-4" />
                   {t("addToCart")}
